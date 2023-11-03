@@ -6,6 +6,7 @@ import './App.css'
 const config: LogtoConfig = {
   endpoint: 'https://y8xykk.logto.app/',
   appId: '50a593m1g3bttpx1n7ll9',
+  scopes: ["openid", "profile", "email", "phone", "roles"],
 }
 
 function App() {
