@@ -1,25 +1,20 @@
 import { match } from "ts-pattern"
 import { type ReactNode } from "react"
-import { useLogto } from "@logto/react"
-
-type Role = "curator" | "administrator" | "basic"
+import { useRoles } from "./useRoles"
 
 type RouterHandlerProperties = {
-  roleViews: Array<{ role: Role; component: ReactNode }>
+  roleViews: { [role: string]: ReactNode}
 }
 
 const RouteHandler = ({ roleViews }: RouterHandlerProperties) => {
-  const { isAuthenticated, fetchUserInfo, isLoading } = useLogto()
-  // 
-  // get roles, then match the view accordingly 
-  const fetchUser = async () => {
-    if (!isAuthenticated) return
-    const userData = await fetchUserInfo()
-    return userData
-  }
-  fetchUser()
-  
-  return match({isLoading, roleViews}).with({isLoading: true}, () => <> Loading</>).otherwise(() => <></>)
+  const { isLoading, roles } = useRoles()
+
+  return match({isLoading, roles})
+          .with({isLoading: true}, () => <> Loading </>)
+          .when(() => roles.includes("administrator") && roleViews.administrator, () => roleViews.administrator)
+          .when(() => roles.includes("curator") && roleViews.curator, () => roleViews.curator)
+          .when(() => roles.includes("basic") && roleViews.basic, () => roleViews.basic)
+          .otherwise(() => <></>)
 }
 
 export { RouteHandler }

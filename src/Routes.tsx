@@ -1,7 +1,7 @@
 import { createBrowserRouter } from "react-router-dom";
 import { Root } from "./Root"
 import { Callback } from "./Callback"
-import { RouteHandler } from "./RouteHandler"
+import InfoPage from "./pages/InfoPage"
 
 const router = createBrowserRouter([
   {
@@ -14,7 +14,7 @@ const router = createBrowserRouter([
   },
   {
     path: "/info",
-    element: <RouteHandler />
+    element: InfoPage
   }
 ])
 
