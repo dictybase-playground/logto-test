@@ -1,13 +1,13 @@
 import { BasicView } from "../views/BasicView";
 import { CuratorView } from "../views/CuratorView";
 import { AdminView } from "../views/AdminView";
-import { RouteHandler } from "../RouteHandler"
+import { MultiViewRouteHandler } from "../MultiViewRouteHandler"
 
 const roleViews = {
    curator:  <CuratorView />,
    administrator:  <AdminView />,
-   basic:  <BasicView />
+   basic:  <BasicView />,
+   none: <> Welcome to dictyBase! If you have an account, please log in. </>
 }
 
-
-export default <RouteHandler roleViews={roleViews} />
+export default <MultiViewRouteHandler roleViews={roleViews} />

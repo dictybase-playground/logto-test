@@ -2,13 +2,12 @@ import { match } from "ts-pattern"
 import { type ReactNode } from "react"
 import { useRoles } from "./useRoles"
 
-type RouterHandlerProperties = {
+type MultiViewRouteHandlerProperties = {
   roleViews: { [role: string]: ReactNode}
 }
 
-const RouteHandler = ({ roleViews }: RouterHandlerProperties) => {
+const MultiViewRouteHandler = ({ roleViews }: MultiViewRouteHandlerProperties) => {
   const { isLoading, roles } = useRoles()
-
   return match({isLoading, roles})
           .with({isLoading: true}, () => <> Loading </>)
           .when(() => roles.includes("administrator") && roleViews.administrator, () => roleViews.administrator)
@@ -17,4 +16,4 @@ const RouteHandler = ({ roleViews }: RouterHandlerProperties) => {
           .otherwise(() => <></>)
 }
 
-export { RouteHandler }
+export { MultiViewRouteHandler }
