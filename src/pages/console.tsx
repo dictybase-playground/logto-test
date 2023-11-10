@@ -1,9 +1,9 @@
-import { PrivateRouteHandler } from "../PrivateRouteHandler";
 import { P, match } from "ts-pattern";
 import { useLogto } from "@logto/react";
 import { AdminConsole } from "../views/AdminConsole";
 import { useLazyQuery, gql } from "@apollo/client";
 import { useEffect } from "react";
+import { Role } from "../constants";
 
 const GET_PROTECTED_RESOURCE = gql`
   query getProtectedResource($access_token: String!) {
@@ -35,9 +35,6 @@ const AdminConsolePage = () => {
     .otherwise(() => <> error </>);
 };
 
-export default (
-  <PrivateRouteHandler
-    allowedRoles={["administrator"]}
-    page={<AdminConsolePage />}
-  />
-);
+const allowedRoles = ["administrator"] as Array<Role>;
+export { allowedRoles };
+export default AdminConsolePage;
