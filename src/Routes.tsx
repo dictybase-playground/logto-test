@@ -2,10 +2,12 @@ import { pipe } from "fp-ts/function";
 import { collect as Rcollect, filter as Rfilter } from "fp-ts/Record";
 import { Ord } from "fp-ts/string";
 import { append as Arpend } from "fp-ts/Array";
+import { bind, let as Olet, of, Do, match } from "fp-ts/Option";
 import { type FunctionComponent } from "react";
-import { createBrowserRouter, RouteObject } from "react-router-dom";
+import { RouteObject, createBrowserRouter } from "react-router-dom";
 import { PrivateRouteHandler } from "./PrivateRouteHandler";
 import { Root } from "./Root";
+import { Layout } from "./Layout";
 import { Callback } from "./Callback";
 import { Role } from "./constants";
 
@@ -69,11 +71,26 @@ const protectedRoutes = (
 
 const buildMergedRoutes = ({ publicR, protectedR }: mergedRoutesProperties) =>
   pipe(
-    publicR,
-    Arpend(protectedR as RouteObject),
+    [...publicR, ...protectedR],
     Arpend({ path: "/callback", element: <Callback /> } as RouteObject),
-    Arpend({ path: "/", element: <Root /> } as RouteObject),
+    Arpend({ index: true, element: <Root /> } as RouteObject),
   );
 
-// const routerDefinition =
+const createRouteDefinition = (allRoutes: dynamicRoutesProperties) =>
+  pipe(
+    Do,
+    bind("publicR", () => pipe(allRoutes, publicRoutes, of)),
+    bind("protectedR", () => pipe(allRoutes, protectedRoutes, of)),
+    Olet("mergedR", buildMergedRoutes),
+    Olet("finalRoutes", ({ mergedR }) =>
+      pipe({ element: <Layout />, children: mergedR }, Array.of),
+    ),
+    match(
+      () => [],
+      ({ finalRoutes }) => finalRoutes,
+    ),
+  ) as Array<RouteObject>;
+
+const router = createBrowserRouter(createRouteDefinition(dynamicRoutes));
+
 export { router };
