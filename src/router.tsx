@@ -7,6 +7,12 @@ import { Root } from "./Root"
 import { Callback } from "./Callback";
 import { ProtectedRoute } from "./ProtectedRoute";
 
+const dynamicRoutes: dynamicRoutesProperties = import.meta.glob(
+  "/src/pages/**/**/*.tsx",
+  {
+    eager: true,
+  },
+);
 
 const routeDefinitions = [
   {
@@ -15,6 +21,7 @@ const routeDefinitions = [
     children: [
       { index: true, element: <Root />},
       { path: "/callback", element: <Callback />},
+      { path: "/public", element: <> Public Page </>},
       {
         path: "/protected",
         children: [

@@ -7,6 +7,7 @@ const ProtectedRouteHandler = () => {
   const { isAuthorized } = usePermify()
   useEffect(() => {
     const authNavigation = async () => {
+      // replace with functional pattern
       if (await isAuthorized(["administrator"])) {
         console.log("is admin")
         navigate("administrator")

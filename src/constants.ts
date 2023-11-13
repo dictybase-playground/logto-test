@@ -6,4 +6,9 @@ enum RolePriority {
   basic
 }
 
-export { type Role, type RolePriority }
+enum ACCESS {
+  protected,
+  private
+}
+
+export { type Role, RolePriority, ACCESS }
