@@ -1,7 +1,5 @@
-import { RouterProvider } from "react-router-dom";
 import { AuthProvider } from "./AuthProvider";
 import { ApolloProvider, ApolloClient, InMemoryCache } from "@apollo/client";
-import { router } from "./Routes";
 import { MainApp } from "./MainApp";
 import "./App.css";
 

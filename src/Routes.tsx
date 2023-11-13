@@ -135,10 +135,23 @@ const roleViews = {
   none: <> Welcome to dictyBase! If you have an account, please log in. </>,
 };
 
-routes = [
+const routes = [
   {
     path: "/info",
-    element: <MultiViewRouteHandler roleViews={roleViews} 
+    children: [
+      {
+        index: true,
+        element: <RoleHandler />
+      },
+      {
+        path: "/admin",
+        element: <AdminInfo />
+      },
+      {
+        path: "/basic",
+        element: <InfoPath />
+      },
+    ]
   }
 ]
 export { router };

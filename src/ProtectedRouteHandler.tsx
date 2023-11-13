@@ -2,7 +2,7 @@ import { useEffect } from "react"
 import { useNavigate, Outlet } from "react-router-dom"
 import { usePermify } from "@permify/react-role"
 
-const PrivateRouteHandler = () => {
+const ProtectedRouteHandler = () => {
   const navigate = useNavigate()
   const { isAuthorized } = usePermify()
   useEffect(() => {
@@ -11,7 +11,7 @@ const PrivateRouteHandler = () => {
         console.log("is admin")
         navigate("administrator")
       } else { 
-        navigate("/")
+        navigate("basic")
       }
     }
     authNavigation()
@@ -22,4 +22,4 @@ const PrivateRouteHandler = () => {
   )
 }
 
-export { PrivateRouteHandler }
+export { ProtectedRouteHandler }
