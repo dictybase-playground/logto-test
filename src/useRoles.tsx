@@ -13,7 +13,7 @@ const useRoles = () => {
       const roles = userData.roles
       setRoles(roles)
     }
-    fetchUser()
+    fetchUser(
   }, [fetchUserInfo, isAuthenticated])
   
   return { isLoading, roles }

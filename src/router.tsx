@@ -1,11 +1,16 @@
+import { pipe } from "fp-ts/function";
+import { filter } from "fp-ts/Array";
 import { createBrowserRouter } from "react-router-dom";
 import { ProtectedRouteHandler } from "./ProtectedRouteHandler";
 import { PrivateRouteHandler } from "./PrivateRouteHandler";
 import { ProtectedAdmin, ProtectedBasic } from "./pages/protected";
 import { Layout } from "./Layout";
-import { Root } from "./Root"
+import { Root } from "./Root";
 import { Callback } from "./Callback";
+import { Forbidden } from "./pages/forbidden";
 import { ProtectedRoute } from "./ProtectedRoute";
+
+type RouteObject = {};
 
 const dynamicRoutes: dynamicRoutesProperties = import.meta.glob(
   "/src/pages/**/**/*.tsx",
@@ -14,16 +19,24 @@ const dynamicRoutes: dynamicRoutesProperties = import.meta.glob(
   },
 );
 
+const pathParts = (path: string) =>
+  path
+    .replaceAll(/\/src\/pages|index|\.tsx$/g, "")
+    .replace(/\[\.{3}.+]/, "*")
+    .replaceAll(/\[(\w+)]/g, ":$1");
+
+// const filterProtectedRouter = (routes: Array<) => {};
+
 const routeDefinitions = [
   {
     path: "/",
     element: <Layout />,
     children: [
-      { index: true, element: <Root />},
-      { path: "/callback", element: <Callback />},
-      { path: "/public", element: <> Public Page </>},
+      { index: true, element: <Root /> },
+      { path: "/callback", element: <Callback /> },
+      { path: "/example-public", element: <> Public Page </> },
       {
-        path: "/protected",
+        path: "/example-protected",
         children: [
           {
             index: true,
@@ -32,16 +45,16 @@ const routeDefinitions = [
           {
             path: "administrator",
             element: <ProtectedRoute allowedRoles={["administrator"]} />,
-            children: [{ index: true, element: <ProtectedAdmin />}]
+            children: [{ index: true, element: <ProtectedAdmin /> }],
           },
           {
             path: "basic",
             element: <ProtectedBasic />,
           },
-        ]
+        ],
       },
       {
-        path: "/private",
+        path: "/example-private",
         children: [
           {
             index: true,
@@ -50,14 +63,15 @@ const routeDefinitions = [
           {
             path: "administrator",
             element: <ProtectedRoute allowedRoles={["administrator"]} />,
-            children: [{ index: true, element: <ProtectedAdmin />}]
+            children: [{ index: true, element: <ProtectedAdmin /> }],
           },
-        ]
+        ],
       },
-    ]
+      { path: "/forbidden", element: <Forbidden /> },
+    ],
   },
-]
+];
 
-const router = createBrowserRouter(routeDefinitions)
+const router = createBrowserRouter(routeDefinitions);
 
-export { router }
+export { router };

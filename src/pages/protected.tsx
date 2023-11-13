@@ -1,16 +1,16 @@
-import { ACCESS } from "../constants"
+import { ACCESS } from "../constants";
 
-const ProtectedBasic = () => <> Hello Basic User! </>
+const ProtectedBasic = () => <> Hello Basic User! </>;
 
 const ProtectedAdmin = () => {
-  return <> Hello, Administrator. </>
-}
+  return <> Hello, Administrator. </>;
+};
 
-const access = ACCESS.protected
+const access = ACCESS.protected;
 
 const roleMap = [
   ["administrator", <ProtectedAdmin />],
   ["basic", <ProtectedBasic />],
-]
+];
 
-export { ProtectedBasic, ProtectedAdmin, access, roleMap }
+export { ProtectedBasic, ProtectedAdmin, access, roleMap };
