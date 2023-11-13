@@ -1,11 +1,12 @@
 import { pipe } from "fp-ts/function";
 import { collect as Rcollect, filter as Rfilter } from "fp-ts/Record";
 import { Ord } from "fp-ts/string";
-import { append as Arpend } from "fp-ts/Array";
+import { append as Arpend, concat } from "fp-ts/Array";
 import { bind, let as Olet, of, Do, match } from "fp-ts/Option";
-import { type FunctionComponent } from "react";
+import { ReactNode, type FunctionComponent } from "react";
 import { RouteObject, createBrowserRouter } from "react-router-dom";
 import { PrivateRouteHandler } from "./PrivateRouteHandler";
+import { MultiViewRouteHandler } from "./MultiViewRouteHandler";
 import { Root } from "./Root";
 import { Layout } from "./Layout";
 import { Callback } from "./Callback";
@@ -15,11 +16,18 @@ type PageComponentData = {
   default: FunctionComponent;
   allowedRoles: Array<Role>;
 };
+
+type MultiViewComponentData = {
+  roleViews: { [role: string]: ReactNode };
+};
+
 type mergedRoutesProperties = {
   publicR: Array<RouteObject>;
   protectedR: Array<RouteObject>;
+  multiR: Array<RouteObject>;
 };
 type dynamicRoutesProperties = Record<string, PageComponentData>;
+type multiViewRouteProperties = Record<string, MultiViewComponentData>;
 
 const dynamicRoutes: dynamicRoutesProperties = import.meta.glob(
   "/src/pages/**/**/*.tsx",
@@ -53,6 +61,18 @@ const mapToPrivateRouteObject = (route: string, value: PageComponentData) => {
   };
 };
 
+const mapToMultiViewRouteObject = (
+  route: string,
+  value: MultiViewComponentData,
+) => {
+  const { roleViews } = value;
+  console.log(roleViews);
+  return {
+    path: pathParts(route),
+    element: <MultiViewRouteHandler roleViews={roleViews} />,
+  };
+};
+
 const publicRoutes = (allRoutes: dynamicRoutesProperties): Array<RouteObject> =>
   pipe(
     allRoutes,
@@ -69,9 +89,22 @@ const protectedRoutes = (
     Rcollect(Ord)(mapToPrivateRouteObject),
   );
 
-const buildMergedRoutes = ({ publicR, protectedR }: mergedRoutesProperties) =>
+const multiViews = (allRoutes: multiViewRouteProperties): Array<RouteObject> =>
   pipe(
-    [...publicR, ...protectedR],
+    allRoutes,
+    Rfilter((v) => !!v.roleViews),
+    Rcollect(Ord)(mapToMultiViewRouteObject),
+  );
+
+const buildMergedRoutes = ({
+  publicR,
+  protectedR,
+  multiR,
+}: mergedRoutesProperties) =>
+  pipe(
+    publicR,
+    concat(protectedR),
+    concat(multiR),
     Arpend({ path: "/callback", element: <Callback /> } as RouteObject),
     Arpend({ index: true, element: <Root /> } as RouteObject),
   );
@@ -81,6 +114,7 @@ const createRouteDefinition = (allRoutes: dynamicRoutesProperties) =>
     Do,
     bind("publicR", () => pipe(allRoutes, publicRoutes, of)),
     bind("protectedR", () => pipe(allRoutes, protectedRoutes, of)),
+    bind("multiR", () => pipe(allRoutes, multiViews, of)),
     Olet("mergedR", buildMergedRoutes),
     Olet("finalRoutes", ({ mergedR }) =>
       pipe({ element: <Layout />, children: mergedR }, Array.of),
@@ -93,4 +127,18 @@ const createRouteDefinition = (allRoutes: dynamicRoutesProperties) =>
 
 const router = createBrowserRouter(createRouteDefinition(dynamicRoutes));
 
+
+const roleViews = {
+  curator: <BasicView />,
+  administrator: <AdminView />,
+  basic: <BasicView />,
+  none: <> Welcome to dictyBase! If you have an account, please log in. </>,
+};
+
+routes = [
+  {
+    path: "/info",
+    element: <MultiViewRouteHandler roleViews={roleViews} 
+  }
+]
 export { router };
