@@ -1,5 +1,6 @@
 import { HasAccess } from "@permify/react-role";
-import { Outlet } from "react-router-dom";
+import { Forbidden } from "./Forbidden";
+import { Outlet, Navigate } from "react-router-dom";
 import { Role } from "./constants";
 
 type ProtectedRouteProperties = {
@@ -7,11 +8,10 @@ type ProtectedRouteProperties = {
 };
 
 const ProtectedRoute = ({ allowedRoles }: ProtectedRouteProperties) => {
-  console.log("protected route", allowedRoles);
   return (
     <HasAccess
       roles={allowedRoles}
-      renderAuthFailed={<> forbidden </>}
+      renderAuthFailed={<Forbidden />}
       isLoading={<> Loading </>}>
       <Outlet />
     </HasAccess>

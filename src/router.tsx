@@ -7,7 +7,6 @@ import { ProtectedAdmin, ProtectedBasic } from "./pages/protected";
 import { Layout } from "./Layout";
 import { Root } from "./Root";
 import { Callback } from "./Callback";
-import { Forbidden } from "./pages/forbidden";
 import { ProtectedRoute } from "./ProtectedRoute";
 
 type RouteObject = {};
@@ -67,7 +66,6 @@ const routeDefinitions = [
           },
         ],
       },
-      { path: "/forbidden", element: <Forbidden /> },
     ],
   },
 ];

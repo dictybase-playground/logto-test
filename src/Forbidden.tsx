@@ -10,4 +10,4 @@ const Forbidden = () => {
   );
 };
 
-export default Forbidden;
+export { Forbidden };

@@ -1,15 +1,10 @@
-import { useNavigate } from 'react-router-dom';
-import { useEffect } from "react"
+import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 
 const Unauthorized = () => {
-  const navigate = useNavigate()
-  
-  useEffect(() => {
-    setTimeout(() => navigate("/"), 2000)
-  })
+  const navigate = useNavigate();
 
-  return <div> Unauthorized. </div>
-  
-}
+  return <div> Unauthorized. Returning to Home page. </div>;
+};
 
-export { Unauthorized }
+export { Unauthorized };
