@@ -8,9 +8,9 @@ const ProtectedAdmin = () => {
 
 const access = ACCESS.protected;
 
-const roleMap = [
+const routeMap = [
   ["administrator", <ProtectedAdmin />],
   ["basic", <ProtectedBasic />],
 ];
 
-export { ProtectedBasic, ProtectedAdmin, access, roleMap };
+export { ProtectedBasic, ProtectedAdmin, access, routeMap };

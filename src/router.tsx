@@ -39,7 +39,7 @@ const routeDefinitions = [
         children: [
           {
             index: true,
-            element: <ProtectedRouteHandler />,
+            element: <ProtectedRouteHandler roles={["administrator", "basic"]} />,
           },
           {
             path: "administrator",

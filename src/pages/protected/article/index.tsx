@@ -1,4 +1,4 @@
-import { ACCESS } from "../../constants";
+import { ACCESS } from "../../../constants";
 
 const access = ACCESS.protected;
 

@@ -1,25 +1,32 @@
-import { useState, useEffect } from "react";
-import { useNavigate, Navigate } from "react-router-dom";
+import { useEffect, type ReactNode, useState } from "react";
+import { useNavigate, Outlet } from "react-router-dom";
 import { usePermify } from "@permify/react-role";
+import { type Role, type RouteMap } from "./constants";
 
-const ProtectedRouteHandler = () => {
+
+type ProtectedRouteHandlerProperties = {
+  roles: Array<Role>
+}
+
+const ProtectedRouteHandler = ({ roles }: ProtectedRouteHandlerProperties) => {
   const navigate = useNavigate();
   const { isAuthorized } = usePermify();
-  const [route, setRoute] = useState("");
-
+  console.log(roles)
   useEffect(() => {
     const authNavigation = async () => {
-      // replace with functional pattern
-      if (await isAuthorized(["administrator"])) {
-        setRoute("administrator");
-      } else {
-        setRoute("basic");
+      // Assuming a user will only have a single role
+      let rolePath = "basic"
+      for (let i = 0; i < roles.length; i++) {
+        if (await isAuthorized([roles[i]])) {
+          rolePath = roles[i]
+        }
       }
+      navigate(rolePath)
     };
     authNavigation();
-  }, [isAuthorized, navigate]);
+  }, [isAuthorized, navigate, roles]);
 
-  return <Navigate to={route} />;
+  return <Outlet />;
 };
 
 export { ProtectedRouteHandler };
