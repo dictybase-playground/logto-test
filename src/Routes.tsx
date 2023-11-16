@@ -10,11 +10,12 @@ import { MultiViewRouteHandler } from "./MultiViewRouteHandler";
 import { Root } from "./Root";
 import { Layout } from "./Layout";
 import { Callback } from "./Callback";
-import { Role } from "./constants";
+import { Role, ACCESS } from "./constants";
 
 type PageComponentData = {
   default: FunctionComponent;
-  allowedRoles: Array<Role>;
+  access: ACCESS;
+  allowedRoles?: Array<Role>;
 };
 
 type MultiViewComponentData = {
@@ -127,7 +128,6 @@ const createRouteDefinition = (allRoutes: dynamicRoutesProperties) =>
 
 const router = createBrowserRouter(createRouteDefinition(dynamicRoutes));
 
-
 const roleViews = {
   curator: <BasicView />,
   administrator: <AdminView />,
@@ -141,17 +141,17 @@ const routes = [
     children: [
       {
         index: true,
-        element: <RoleHandler />
+        element: <RoleHandler />,
       },
       {
         path: "/admin",
-        element: <AdminInfo />
+        element: <AdminInfo />,
       },
       {
         path: "/basic",
-        element: <InfoPath />
+        element: <InfoPath />,
       },
-    ]
-  }
-]
+    ],
+  },
+];
 export { router };
