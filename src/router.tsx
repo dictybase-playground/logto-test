@@ -1,9 +1,10 @@
 import { FunctionComponent } from "react";
 import { pipe } from "fp-ts/function";
+import { left, right } from "fp-ts/Either"
 import { collect as Rcollect, filter as Rfilter } from "fp-ts/Record";
 import { Ord } from "fp-ts/string";
 import { getOrElse } from "fp-ts/lib/Option";
-import { filter as arrFilter, map as arrMap, head } from "fp-ts/Array";
+import { reduce as arrReduce, filter as arrFilter, map as arrMap, head, separate, concat } from "fp-ts/Array";
 import { createBrowserRouter } from "react-router-dom";
 import { ACCESS, Role } from "./constants";
 import { ProtectedRouteHandler } from "./ProtectedRouteHandler";
@@ -14,6 +15,8 @@ import { Root } from "./Root";
 import { Callback } from "./Callback";
 import { ProtectedRoute } from "./ProtectedRoute";
 
+type RouteMap = Array<[Role, JSX.Element]>
+
 type PublicComponentData = {
   default: FunctionComponent;
   access: ACCESS;
@@ -21,7 +24,7 @@ type PublicComponentData = {
 
 type ProtectedComponentData = {
   access: ACCESS;
-  routeMap: Array<[Role, JSX.Element]>;
+  routeMap: RouteMap;
 };
 
 type PageComponentData = PublicComponentData | ProtectedComponentData;
@@ -50,12 +53,13 @@ const mapToProtectedRouteObject = (
   route: string,
   value: ProtectedComponentData,
 ) => {
-  const publicRoute = pipe(
-    value.routeMap,
-    arrFilter((a) => a[0] === "basic"),
-  );
-  const children = pipe(value.routeMap, arrMap(mapProtectedChildrenRoutes));
-  const roles = pipe(value.routeMap, arrMap(head));
+  // Protected route consists of a public subroute and private subroutes
+  // 1. 
+  const eitherRoleRoutes = (roleComponent: [Role, JSX.Element]) => roleComponent[0] === "basic" ? left(roleComponent) : right(roleComponent)
+  const roleRoutes = pipe(value.routeMap, arrMap(eitherRoleRoutes), separate)
+  const publicRoutes = pipe(roleRoutes.left, arrMap((a) => ({ path: a[0], element: a[1] })))
+  const protectedRoutes = pipe(roleRoutes.right, arrMap(a => ({ path: a[0], element: <ProtectedRoute allowedRoles={[a[0]]} />, children: a[1]})))
+  const children = concat(publicRoutes)(protectedRoutes)
   return {
     path: pathParts(route),
     element: <ProtectedRouteHandler />,
