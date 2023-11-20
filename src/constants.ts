@@ -1,11 +1,9 @@
 import { type ReactNode } from "react";
 
-type Role = "curator" | "administrator" | "basic";
-
-enum RolePriority {
-  administrator,
-  curator,
-  basic,
+enum Role {
+  ADMINISTRATOR = "administrator",
+  CURATOR = "curator",
+  BASIC = "basic",
 }
 
 enum ACCESS {
@@ -16,4 +14,4 @@ enum ACCESS {
 
 type RouteMap = Array<[Role, ReactNode]>;
 
-export { type Role, type RolePriority, ACCESS, type RouteMap };
+export { Role, ACCESS, type RouteMap };

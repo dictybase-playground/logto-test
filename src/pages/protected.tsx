@@ -3,6 +3,7 @@ import { ACCESS } from "../constants";
 const ProtectedBasic = () => <> Hello Basic User! </>;
 
 const ProtectedAdmin = () => {
+  console.log("administrator page");
   return <> Hello, Administrator. </>;
 };
 
