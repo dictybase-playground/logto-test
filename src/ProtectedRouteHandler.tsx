@@ -1,10 +1,11 @@
 import { useEffect, type ReactNode, useState } from "react";
 import { useNavigate, Outlet } from "react-router-dom";
 import { usePermify } from "@permify/react-role";
-import { orderRoles, authorizeRole } from "./utils";
+import { orderRoles, asyncAuthorizationFunction } from "./utils";
 import { Role, type RouteMap } from "./constants";
-import { pipe } from "fp-ts/lib/function";
-import { map as arrMap } from "fp-ts/Array";
+import { pipe, flow, apply } from "fp-ts/lib/function";
+import { map as arrMap, filter as arrFilter } from "fp-ts/Array";
+import { getOrElse, tryCatchK } from "fp-ts/lib/TaskEither";
 
 type ProtectedRouteHandlerProperties = {
   roles: Array<Role>;
@@ -15,7 +16,18 @@ const ProtectedRouteHandler = ({ roles }: ProtectedRouteHandlerProperties) => {
   const { isAuthorized } = usePermify();
   useEffect(() => {
     const authNavigation = async () => {
-      pipe(roles, orderRoles, arrMap(authorizeRole(isAuthorized)));
+      const authorizationFunction = pipe(
+        isAuthorized,
+        asyncAuthorizationFunction,
+      )
+      const TEauthFn = tryCatchK(authorizationFunction, () => false)
+      const filterAuthorizedRoles =
+        // const authorizationFunction = flow(isAuthorized, asyncAuthorizationFunction)
+        pipe(
+          roles,
+          orderRoles,
+          arrFilter(flow(TEauthFn, getOrElse(() =>)))
+        );
     };
     authNavigation();
   }, [isAuthorized, navigate, roles]);

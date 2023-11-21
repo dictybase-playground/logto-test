@@ -1,5 +1,10 @@
 import { Ord as numOrd } from "fp-ts/number";
 import { of as arrOf, sort as arrSort, filter as arrFilter } from "fp-ts/Array";
+import {
+  getOrElse,
+  of as TEof,
+  tryCatchK as TEtryCatchK,
+} from "fp-ts/lib/TaskEither";
 import { pipe, apply } from "fp-ts/function";
 import { Role, rolePriority } from "./constants";
 import { fromCompare } from "fp-ts/lib/Ord";
@@ -24,9 +29,15 @@ const roleOrd = apply(compareRoles)(fromCompare);
 
 const orderRoles = apply(roleOrd)(arrSort);
 
-const authorizeRole =
-  (asyncAuthFn: PermifyAuthContext["isAuthorized"]) => (role: Role) => {
-    return pipe(role, arrOf, asyncAuthFn);
+const TEisAuthorized =
+  (asyncAuthFn: PermifyAuthContext["isAuthorized"]) =>
+  async (roles: Array<Role>) => {
+    const isAuthorized = await asyncAuthFn(roles);
+    return isAuthorized;
   };
 
-export { orderRoles, authorizeRole };
+const asyncAuthorizationFunction =
+  (isAuthorized: PermifyAuthContext["isAuthorized"]) => async (role: Role) =>
+    pipe(role, arrOf, isAuthorized);
+
+export { orderRoles, asyncAuthorizationFunction };
