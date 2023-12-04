@@ -2,7 +2,7 @@ import { pipe } from "fp-ts/function"
 import { map, filter } from "fp-ts/Array"
 import { TE } from "fp-ts/lib/TaskEither"
 import { ReactNode } from "react"
-import { Role } from "./constants"
+import { RoleNames } from "./constants"
 import { usePermify } from "@permify/react-role"
 import { useNavigate } from "react-router-dom"
 
@@ -13,11 +13,11 @@ import { useNavigate } from "react-router-dom"
  * 4. navigate to highest priority allowed route
  */
 
-type RoleComponent = [Array<Role>, ReactNode]
+type RoleComponent = [Array<RoleNames>, ReactNode]
 
 type RoleComponentMap = Array<RoleComponent>
 
-const authorizationPredicate =  (authorizationFunction: (roleNames: Array<Role>) => Promise<boolean>) => 
+const authorizationPredicate =  (authorizationFunction: (roleNames: Array<RoleNames>) => Promise<boolean>) => 
   async (roleComponents: RoleComponent) =>  {
     const isAuthorized = await authorizationFunction(roleComponents[0])
     return isAuthorized

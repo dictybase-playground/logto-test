@@ -1,10 +1,11 @@
 import { type ReactNode } from "react";
 
-enum Role {
+enum RoleNames {
   ADMINISTRATOR = "administrator",
   CURATOR = "curator",
   BASIC = "basic",
 }
+type Role = RoleNames.ADMINISTRATOR | RoleNames.CURATOR | RoleNames.BASIC
 
 enum ACCESS {
   public,
@@ -13,11 +14,11 @@ enum ACCESS {
 }
 
 const rolePriority = {
-  [Role.ADMINISTRATOR]: 0,
-  [Role.CURATOR]: 1,
-  [Role.BASIC]: 2,
+  [RoleNames.ADMINISTRATOR]: 0,
+  [RoleNames.CURATOR]: 1,
+  [RoleNames.BASIC]: 2,
 };
 
-type RouteMap = Array<[Role, ReactNode]>;
+type RouteMap = Array<[RoleNames, ReactNode]>;
 
-export { Role, ACCESS, rolePriority, type RouteMap };
+export { RoleNames, ACCESS, rolePriority, type RouteMap, type Role };

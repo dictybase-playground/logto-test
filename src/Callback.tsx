@@ -5,6 +5,7 @@ const Callback = () => {
   const navigate = useNavigate()
   const { isLoading } = useHandleSignInCallback(() => {
     // Navigate to root path when finished
+    console.log("navigating to home")  
     navigate("/")
   });
   console.log("callback")

@@ -15,23 +15,16 @@ import {
 import {
   match,
   Do,
-  bind,
   let as Olet,
-  getOrElse,
   isSome,
-  of,
 } from "fp-ts/Option";
 import { createBrowserRouter, type RouteObject } from "react-router-dom";
-import { ACCESS, Role } from "./constants";
+import { ACCESS, RoleNames } from "./constants";
 import { ProtectedRouteHandler } from "./ProtectedRouteHandler";
-import { PrivateRouteHandler } from "./PrivateRouteHandler";
-import { ProtectedAdmin, ProtectedBasic } from "./pages/protected";
 import { Layout } from "./Layout";
-import { Root } from "./Root";
-import { Callback } from "./Callback";
 import { ProtectedRoute } from "./ProtectedRoute";
 
-type RoleComponent = [Role, JSX.Element];
+type RoleComponent = [RoleNames, JSX.Element];
 
 type ProtectedRouteMap = Array<RoleComponent>;
 
@@ -77,8 +70,8 @@ const mapToPublicRouteObject = (route: string, value: PublicPageData) => {
   return { path: pathParts(route), element: <PageComponent /> };
 };
 
-const isRole = (x: unknown): x is Role =>
-  x === Role.ADMINISTRATOR || x === Role.CURATOR || x === Role.BASIC;
+const isRole = (x: unknown): x is RoleNames =>
+  x === RoleNames.ADMINISTRATOR || x === RoleNames.CURATOR || x === RoleNames.BASIC;
 
 const mapToProtectedRouteObject = (route: string, value: ProtectedPageData) => {
   // Protected route consists of a public subroute and private subroutes
@@ -90,7 +83,7 @@ const mapToProtectedRouteObject = (route: string, value: ProtectedPageData) => {
     arrFilter(isRole),
   );
   const eitherRoleRoutes = (roleComponent: RoleComponent) =>
-    roleComponent[0] === Role.BASIC
+    roleComponent[0] === RoleNames.BASIC
       ? left(roleComponent)
       : right(roleComponent);
   const roleRoutes = pipe(value.routeMap, arrMap(eitherRoleRoutes), separate);
