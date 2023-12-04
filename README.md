@@ -65,7 +65,7 @@ If the base of the protected role is /community, and the resolved role is "admin
 ```mermaid
 flowchart TD
 
-A[`/]
+A[`/`]
 B[`/protected`]
 B1[ProtectedRouteHandler
    redirects user by role]
