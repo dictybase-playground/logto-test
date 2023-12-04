@@ -86,17 +86,3 @@ PQ --> |Yes| C1
 PQ --> |No| B1
 E --> E1
 ```
-
-# Auth Flow
-
-```mermaid
-sequenceDiagram
-
-participant APP as Application
-participant AS as AuthServer
-participant R as ResourceServer
-participant L as Logto
-
-
-
-```
