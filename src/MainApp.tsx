@@ -5,7 +5,6 @@ import { useInitializePermify } from "./useInitializePermify";
 
 const MainApp = () => {
   useInitializePermify();
-  console.log("main")
   return <RouterProvider router={router} />;
 };
 

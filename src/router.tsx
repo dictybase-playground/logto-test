@@ -5,8 +5,6 @@ import { left, right } from "fp-ts/Either";
 import { collect as Rcollect, filter as Rfilter } from "fp-ts/Record";
 import {
   head,
-  append as arrAppend,
-  reduce as arrReduce,
   filter as arrFilter,
   map as arrMap,
   separate,
@@ -20,6 +18,7 @@ import {
 } from "fp-ts/Option";
 import { createBrowserRouter, type RouteObject } from "react-router-dom";
 import { ACCESS, RoleNames } from "./constants";
+import { isRole } from "./utils"
 import { ProtectedRouteHandler } from "./ProtectedRouteHandler";
 import { Layout } from "./Layout";
 import { ProtectedRoute } from "./ProtectedRoute";
@@ -70,8 +69,6 @@ const mapToPublicRouteObject = (route: string, value: PublicPageData) => {
   return { path: pathParts(route), element: <PageComponent /> };
 };
 
-const isRole = (x: unknown): x is RoleNames =>
-  x === RoleNames.ADMINISTRATOR || x === RoleNames.CURATOR || x === RoleNames.BASIC;
 
 const mapToProtectedRouteObject = (route: string, value: ProtectedPageData) => {
   // Protected route consists of a public subroute and private subroutes

@@ -1,13 +1,13 @@
-import { useEffect, type ReactNode, useState } from "react";
+import { useEffect } from "react";
 import { useNavigate, Outlet } from "react-router-dom";
 import { usePermify } from "@permify/react-role";
-import { Role, type RouteMap } from "./constants";
-import { pipe, flow, apply } from "fp-ts/lib/function";
+import { Role } from "./constants";
+import { pipe, flow } from "fp-ts/lib/function";
 import { head, map as arrMap, filter as arrFilter, sequence } from "fp-ts/Array";
-import { of as TEof,getOrElse, tryCatchK, fold as TEfold, ApplicativePar } from "fp-ts/TaskEither";
+import {  getOrElse, ApplicativePar } from "fp-ts/TaskEither";
 import { of as Tof, map as Tmap } from "fp-ts/Task"
 import { getOrElse as OgetOrElse } from "fp-ts/Option"
-import { orderRoles, asyncAuthorizationFunction, isRoleAuthorized } from "./utils";
+import { orderRoles, asyncAuthorizationFunction } from "./utils";
 import { RoleNames } from "./constants";
 
 type ProtectedRouteHandlerProperties = {
