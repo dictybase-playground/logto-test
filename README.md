@@ -67,8 +67,7 @@ flowchart TD
 
 A[`/`]
 B[`/protected`]
-B1[ProtectedRouteHandler
-   redirects user by role]
+B1[ProtectedRouteHandler redirects user by role]
 C[`/protected/admin`]
 E[`/protected/basic`]
 PC[ProtectedRoute]
