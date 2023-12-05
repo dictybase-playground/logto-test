@@ -1,4 +1,5 @@
 import { ACCESS } from "../constants";
+import { RoleNames, RouteMap } from "../constants";
 
 const ProtectedBasic = () => <> Hello Basic User! </>;
 
@@ -9,9 +10,9 @@ const ProtectedAdmin = () => {
 
 const access = ACCESS.protected;
 
-const routeMap = [
-  ["administrator", <ProtectedAdmin />],
-  ["basic", <ProtectedBasic />],
+const routeMap: RouteMap = [
+  [RoleNames.ADMINISTRATOR, <ProtectedAdmin />],
+  [RoleNames.BASIC, <ProtectedBasic />],
 ];
 
 export { ProtectedBasic, ProtectedAdmin, access, routeMap };

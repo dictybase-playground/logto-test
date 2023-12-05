@@ -5,8 +5,6 @@ import { left, right } from "fp-ts/Either";
 import { collect as Rcollect, filter as Rfilter } from "fp-ts/Record";
 import {
   head,
-  append as arrAppend,
-  reduce as arrReduce,
   filter as arrFilter,
   map as arrMap,
   separate,
@@ -20,6 +18,7 @@ import {
 } from "fp-ts/Option";
 import { createBrowserRouter, type RouteObject } from "react-router-dom";
 import { ACCESS, RoleNames } from "./constants";
+import { isRole } from "./utils"
 import { ProtectedRouteHandler } from "./ProtectedRouteHandler";
 import { Layout } from "./Layout";
 import { ProtectedRoute } from "./ProtectedRoute";
@@ -70,11 +69,13 @@ const mapToPublicRouteObject = (route: string, value: PublicPageData) => {
   return { path: pathParts(route), element: <PageComponent /> };
 };
 
-const isRole = (x: unknown): x is RoleNames =>
-  x === RoleNames.ADMINISTRATOR || x === RoleNames.CURATOR || x === RoleNames.BASIC;
 
-const mapToProtectedRouteObject = (route: string, value: ProtectedPageData) => {
-  // Protected route consists of a public subroute and private subroutes
+const mapToProtectedRouteObject = (route: string, value: ProtectedPageData): RouteObject => {
+  /**
+   * Array<[RoleName, JSX.Element] -> Array<RoleName>
+   * 
+   * an array of rolenames to be passed into the `ProtectedRouterHandler` componenet
+   */
   const availableRoles = pipe(
     value.routeMap,
     arrMap(head),
@@ -82,16 +83,22 @@ const mapToProtectedRouteObject = (route: string, value: ProtectedPageData) => {
     arrMap((a) => a.value),
     arrFilter(isRole),
   );
+
+  /**
+   * Separate the protected subroutes from the public subroute
+   */
   const eitherRoleRoutes = (roleComponent: RoleComponent) =>
     roleComponent[0] === RoleNames.BASIC
       ? left(roleComponent)
       : right(roleComponent);
   const roleRoutes = pipe(value.routeMap, arrMap(eitherRoleRoutes), separate);
-  const publicRoutes = pipe(
+  
+  const publicSubroute = pipe(
     roleRoutes.left,
     arrMap((a) => ({ path: a[0], element: a[1] })),
   );
-  const protectedRoutes = pipe(
+  
+  const protectedSubroute = pipe(
     roleRoutes.right,
     arrMap((a) => ({
       path: a[0],
@@ -99,7 +106,9 @@ const mapToProtectedRouteObject = (route: string, value: ProtectedPageData) => {
       children: Array.of({ index: true, element: a[1] }),
     })),
   );
-  const children = concat(publicRoutes)(protectedRoutes);
+
+
+  const children = concat(publicSubroute)(protectedSubroute);
   return {
     path: pathParts(route),
     element: <ProtectedRouteHandler roles={availableRoles} />,
@@ -147,7 +156,7 @@ const createRouteDefinition = (allRoutes: dynamicRouteProperties) =>
   );
 
 const routeDefinitions = createRouteDefinition(dynamicRoutes);
-console.log(routeDefinitions);
+
 const router = createBrowserRouter(routeDefinitions);
 
 // const routeDefinitions = [

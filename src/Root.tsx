@@ -5,7 +5,7 @@ import { LogOutButton } from "./LogOutButton"
 
 const Root = () => {
   const { isAuthenticated } = useLogto()
-
+  
   return (
     <Container>{isAuthenticated ? <LogOutButton /> : <LogInButton />}</Container>
   )

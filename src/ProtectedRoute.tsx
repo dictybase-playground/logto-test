@@ -1,6 +1,6 @@
 import { HasAccess } from "@permify/react-role";
 import { Forbidden } from "./Forbidden";
-import { Outlet, Navigate } from "react-router-dom";
+import { Outlet } from "react-router-dom";
 import { Role } from "./constants";
 
 type ProtectedRouteProperties = {
