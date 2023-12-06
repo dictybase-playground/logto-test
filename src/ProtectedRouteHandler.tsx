@@ -1,5 +1,5 @@
-import { useEffect } from "react";
-import { useNavigate, Outlet } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useNavigate, Outlet, Navigate } from "react-router-dom";
 import { usePermify } from "@permify/react-role";
 import { Role } from "./constants";
 import { pipe, flow } from "fp-ts/lib/function";
@@ -22,6 +22,7 @@ type ProtectedRouteHandlerProperties = {
 const ProtectedRouteHandler = ({ roles }: ProtectedRouteHandlerProperties) => {
   const navigate = useNavigate();
   const { isAuthorized } = usePermify();
+  const [resolvedPath, setResolvedPath] = useState("")
   useEffect(() => {
     const authNavigation = async () => {
       const getAuthorizedRole = pipe(
@@ -45,13 +46,14 @@ const ProtectedRouteHandler = ({ roles }: ProtectedRouteHandlerProperties) => {
           ),
         ),
       );
-      navigate(await getAuthorizedRole(), { replace: true });
+      // navigate(await getAuthorizedRole(), { replace: true });
+      setResolvedPath(await getAuthorizedRole())
     };
 
     authNavigation();
   }, [isAuthorized, navigate, roles]);
 
-  return <Outlet />;
+  return <Navigate to={resolvedPath} />;
 };
 
 export { ProtectedRouteHandler };
