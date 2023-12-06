@@ -1,5 +1,6 @@
 import { useLogto } from "@logto/react";
 import { usePermify } from "@permify/react-role"
+import { Button } from "@mui/material"
 
 const LogOutButton = () => {
   const { signOut } = useLogto();
@@ -14,9 +15,9 @@ const LogOutButton = () => {
   }
   
   return (
-    <button onClick={onClick}>
+    <Button onClick={onClick}>
       Sign out
-    </button>
+    </Button>
   )
 }
 
