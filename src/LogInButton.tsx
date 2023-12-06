@@ -1,12 +1,13 @@
 import { useLogto } from '@logto/react'
+import { Button } from '@mui/material';
 
 const LogInButton = () => {
   const { signIn } = useLogto();
 
   return (
-    <button onClick={() => signIn('http://localhost:5173/callback')}>
+    <Button onClick={() => signIn('http://localhost:5173/callback')}>
       Sign In
-    </button>
+    </Button>
   )
 }
 
