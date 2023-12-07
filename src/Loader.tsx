@@ -1,8 +1,6 @@
 const Loader = () => {
-  console.log("Loading")
-  return (
-    <div> Loading... </div>
-  )
+  // console.log("Loading")
+  return <div> Loading... </div>
 }
 
 export { Loader }

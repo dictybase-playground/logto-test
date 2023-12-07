@@ -6,12 +6,12 @@ import "./App.css"
 const useInitializePermify = () => {
   const { isAuthenticated, fetchUserInfo } = useLogto()
   const { setUser } = usePermify()
-  console.log("useInitializePermify")
+  // console.log("useInitializePermify")
   useEffect(() => {
     const fetchUser = async () => {
       if (!isAuthenticated) return
       const userData = await fetchUserInfo()
-      console.log(userData)
+      // console.log(userData)
       // graphql request here to get roles / permissions in actual application
       if (!userData) return
       setUser({

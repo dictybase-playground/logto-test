@@ -5,7 +5,6 @@ import { type Option, fromNullable, none } from "fp-ts/Option"
 const useLogtoUser = () => {
   const { isAuthenticated, fetchUserInfo, isLoading } = useLogto()
   const [user, setUser] = useState<Option<UserInfoResponse>>(none)
-  console.log("user loading", isLoading)
   useEffect(() => {
     const handleUserInformation = async () => {
       if (isAuthenticated) {
@@ -14,9 +13,9 @@ const useLogtoUser = () => {
       }
     }
     handleUserInformation()
-  }, [fetchUserInfo, isAuthenticated, user])
+  }, [fetchUserInfo, isAuthenticated])
 
-  return { user, isLoading }
+  return { user, isLoading, isAuthenticated }
 }
 
 export { useLogtoUser }

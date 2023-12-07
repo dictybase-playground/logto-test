@@ -4,7 +4,6 @@ import { UserContext } from "./PrivateRouteHandler"
 
 const User = () => {
   const { user } = useOutletContext<UserContext>()
-
   return (
     <Stack>
       <Typography> {user?.name} </Typography>
