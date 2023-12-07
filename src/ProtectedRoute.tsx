@@ -1,12 +1,12 @@
-import { HasAccess } from "@permify/react-role";
-import { Forbidden } from "./Forbidden";
-import { Outlet } from "react-router-dom";
-import { Role } from "./constants";
-import { Loader } from "./Loader";
+import { HasAccess } from "@permify/react-role"
+import { Forbidden } from "./Forbidden"
+import { Outlet } from "react-router-dom"
+import { Role } from "./constants"
+import { Loader } from "./Loader"
 
 type ProtectedRouteProperties = {
-  allowedRoles: Array<Role>;
-};
+  allowedRoles: Array<Role>
+}
 
 const ProtectedRoute = ({ allowedRoles }: ProtectedRouteProperties) => {
   return (
@@ -16,7 +16,7 @@ const ProtectedRoute = ({ allowedRoles }: ProtectedRouteProperties) => {
       isLoading={<Loader />}>
       <Outlet />
     </HasAccess>
-  );  
-};
+  )
+}
 
-export { ProtectedRoute };
+export { ProtectedRoute }

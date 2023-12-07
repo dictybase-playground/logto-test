@@ -1,24 +1,19 @@
-import { useEffect } from "react"
-import { useNavigate, Outlet } from "react-router-dom"
-import { usePermify } from "@permify/react-role"
+import { Outlet } from "react-router-dom"
+import { P, match } from "ts-pattern"
+import { none, some } from "fp-ts/Option"
+import { useLogtoUser } from "./useLogtoUser"
+import { Loader } from "./Loader"
 
 const PrivateRouteHandler = () => {
-  const navigate = useNavigate()
-  const { isAuthorized } = usePermify()
-  useEffect(() => {
-    const authNavigation = async () => {
-      if (await isAuthorized(["administrator"])) {
-        console.log("is admin")
-        navigate("administrator")
-      } else { 
-        navigate("/")
-      }
-    }
-    authNavigation()
-  }, [isAuthorized, navigate])
-
+  const { user } = useLogtoUser()
+  const isLoading = false
   return (
-    <Outlet />
+    // hmm maybe this logic could be written a better way
+    match({ user, isLoading })
+      .with({ isLoading: true }, () => <Loader />)
+      .with({ user: none }, () => <> No user found </>)
+      .with({ user: some({ sub: P.string }) }, () => <Outlet />)
+      .otherwise(() => <> This message should not appear. </>)
   )
 }
 

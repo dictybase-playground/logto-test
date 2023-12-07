@@ -4,6 +4,7 @@ import { Ord } from "fp-ts/string";
 import { left, right } from "fp-ts/Either";
 import { collect as Rcollect, filter as Rfilter } from "fp-ts/Record";
 import {
+  of as Aof,
   head,
   filter as arrFilter,
   map as arrMap,
@@ -20,6 +21,7 @@ import { createBrowserRouter, type RouteObject } from "react-router-dom";
 import { ACCESS, RoleNames } from "./constants";
 import { isRole } from "./utils"
 import { ProtectedRouteHandler } from "./ProtectedRouteHandler";
+import { PrivateRouteHandler } from "./PrivateRouteHandler"
 import { Layout } from "./Layout";
 import { ProtectedRoute } from "./ProtectedRoute";
 
@@ -31,6 +33,8 @@ type PublicPageData = {
   default: FunctionComponent;
   access: ACCESS;
 };
+
+type  PrivatePageData = PublicPageData
 
 type ProtectedPageData = {
   access: ACCESS;
@@ -44,6 +48,10 @@ type dynamicRouteProperties = Record<string, PageComponentData>;
 const isPublicPageData = (
   pageData: PageComponentData,
 ): pageData is PublicPageData => pageData.access === ACCESS.public;
+
+const isPrivatePageData = (
+  pageData: PageComponentData,
+): pageData is PublicPageData => pageData.access === ACCESS.private;
 
 const isProtectedPageData = (
   pageData: PageComponentData,
@@ -69,6 +77,10 @@ const mapToPublicRouteObject = (route: string, value: PublicPageData) => {
   return { path: pathParts(route), element: <PageComponent /> };
 };
 
+const mapToPrivateRouteObject = (route: string, value: PrivatePageData): RouteObject => {
+  const PageComponent = value.default;
+  return { path: pathParts(route), element: <PrivateRouteHandler />, children: [{index: true, element: <PageComponent />} ] };
+}
 
 const mapToProtectedRouteObject = (route: string, value: ProtectedPageData): RouteObject => {
   /**
@@ -93,25 +105,30 @@ const mapToProtectedRouteObject = (route: string, value: ProtectedPageData): Rou
       : right(roleComponent);
   const roleRoutes = pipe(value.routeMap, arrMap(eitherRoleRoutes), separate);
   
-  const publicSubroute = pipe(
+  const publicSubroutes = pipe(
     roleRoutes.left,
-    arrMap((a) => ({ path: a[0], element: a[1] })),
+    arrMap((a) => ({ path: a[0], element: a[1] } as RouteObject)),
   );
   
-  const protectedSubroute = pipe(
+  const protectedSubroutes = pipe(
     roleRoutes.right,
     arrMap((a) => ({
       path: a[0],
       element: <ProtectedRoute allowedRoles={[a[0]]} />,
       children: Array.of({ index: true, element: a[1] }),
-    })),
+    }) as RouteObject),
   );
 
 
-  const children = concat(publicSubroute)(protectedSubroute);
+  // const children = concat(publicSubroute)(protectedSubroute);
+  const children = pipe(
+    Aof({ index: true, element: <ProtectedRouteHandler roles={availableRoles} />}),
+    concat(publicSubroutes),
+    concat(protectedSubroutes)
+    )
+
   return {
     path: pathParts(route),
-    element: <ProtectedRouteHandler roles={availableRoles} />,
     children,
   };
 };
@@ -121,6 +138,13 @@ const publicRoutes = (allRoutes: dynamicRoutesProperties): Array<RouteObject> =>
     allRoutes,
     Rfilter(isPublicPageData),
     Rcollect(Ord)(mapToPublicRouteObject),
+  );
+
+const privateRoutes = (allRoutes: dynamicRoutesProperties): Array<RouteObject> =>
+  pipe(
+    allRoutes,
+    Rfilter(isPrivatePageData),
+    Rcollect(Ord)(mapToPrivateRouteObject),
   );
 
 const protectedRoutes = (
@@ -134,16 +158,19 @@ const protectedRoutes = (
 
 const buildMergedRoutes = ({
   publicR,
+  privateR,
   protectedR,
 }: {
   publicR: Array<RouteObject>;
+  privateR: Array<RouteObject>;
   protectedR: Array<RouteObject>;
-}) => pipe(publicR, concat(protectedR));
+}) => pipe(publicR, concat(privateR), concat(protectedR));
 
 const createRouteDefinition = (allRoutes: dynamicRouteProperties) =>
   pipe(
     Do,
     Olet("publicR", () => pipe(allRoutes, publicRoutes)),
+    Olet("privateR", () => pipe(allRoutes, privateRoutes)),
     Olet("protectedR", () => pipe(allRoutes, protectedRoutes)),
     Olet("mergedR", buildMergedRoutes),
     Olet("finalRoutes", ({ mergedR }) =>
@@ -159,49 +186,4 @@ const routeDefinitions = createRouteDefinition(dynamicRoutes);
 
 const router = createBrowserRouter(routeDefinitions);
 
-// const routeDefinitions = [
-//   {
-//     path: "/",
-//     element: <Layout />,
-//     children: [
-//       { index: true, element: <Root /> },
-//       { path: "/callback", element: <Callback /> },
-//       { path: "/example-public", element: <> Public Page </> },
-//       {
-//         path: "/example-protected",
-//         children: [
-//           {
-//             index: true,
-//             element: (
-//               <ProtectedRouteHandler roles={["administrator", "basic"]} />
-//             ),
-//           },
-//           {
-//             path: "administrator",
-//             element: <ProtectedRoute allowedRoles={["administrator"]} />,
-//             children: [{ index: true, element: <ProtectedAdmin /> }],
-//           },
-//           {
-//             path: "basic",
-//             element: <ProtectedBasic />,
-//           },
-//         ],
-//       },
-//       {
-//         path: "/example-private",
-//         children: [
-//           {
-//             index: true,
-//             element: <PrivateRouteHandler />,
-//           },
-//           {
-//             path: "administrator",
-//             element: <ProtectedRoute allowedRoles={["administrator"]} />,
-//             children: [{ index: true, element: <ProtectedAdmin /> }],
-//           },
-//         ],
-//       },
-//     ],
-//   },
-// ];
 export { router };
