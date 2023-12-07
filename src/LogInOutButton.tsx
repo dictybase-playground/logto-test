@@ -4,10 +4,8 @@ import { LogOutButton } from "./LogOutButton"
 
 const LogInOutButton = () => {
   const { isAuthenticated } = useLogto()
-  
-  return (
-    <>{isAuthenticated ? <LogOutButton /> : <LogInButton />}</>
-  )
+
+  return <>{isAuthenticated ? <LogOutButton /> : <LogInButton />}</>
 }
 
 export { LogInOutButton }

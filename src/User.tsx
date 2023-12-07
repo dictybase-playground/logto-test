@@ -1,9 +1,16 @@
-import { useLogtoUser } from "./useLogtoUser"
+import { Stack, Typography } from "@mui/material"
+import { useOutletContext } from "react-router-dom"
+import { UserContext } from "./PrivateRouteHandler"
 
 const User = () => {
-  const { user } = useLogtoUser()
+  const { user } = useOutletContext<UserContext>()
 
-  return <div>User</div>
+  return (
+    <Stack>
+      <Typography> {user?.name} </Typography>
+      <Typography> {user?.email} </Typography>
+    </Stack>
+  )
 }
 
 export { User }

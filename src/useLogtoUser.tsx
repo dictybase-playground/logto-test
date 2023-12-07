@@ -8,13 +8,13 @@ const useLogtoUser = () => {
   console.log("user loading", isLoading)
   useEffect(() => {
     const handleUserInformation = async () => {
-      const authUser = await fetchUserInfo()
       if (isAuthenticated) {
+        const authUser = await fetchUserInfo()
         setUser(fromNullable(authUser))
       }
     }
     handleUserInformation()
-  }, [fetchUserInfo, isAuthenticated])
+  }, [fetchUserInfo, isAuthenticated, user])
 
   return { user, isLoading }
 }
