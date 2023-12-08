@@ -51,7 +51,7 @@ const ProtectedRouteHandler = ({ roles }: ProtectedRouteHandlerProperties) => {
   }, [isAuthorized, navigate, roles])
 
   if (isLoading) return <Loader />
-  return <Navigate to={resolvedPath} replace />
+  return <Navigate to={resolvedPath} replace state={{ user: }} />
 }
 
 export { ProtectedRouteHandler }
