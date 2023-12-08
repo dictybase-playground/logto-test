@@ -53,14 +53,14 @@ Each element in the routeMap array be rendered as the <Outlet /> of a `Protected
 # ProtectedRouteHandler
 
 ```ts
-({ roles }: { role: Array<Role> }) => JSX.Element;
+;({ roles }: { role: Array<Role> }) => JSX.Element
 ```
 
 Redirects the user to the appropriate subroute. The component takes the array of roles, filters out the unauthorized roles, sorts them by a role priority order defined in the application, and returns the first role. The name of the role is used as a subpath to which the user is navigated.
 
 If the base of the protected role is /community, and the resolved role is "administrator", the user will be redirected to /community/administrator
 
-# Route Example
+### Protected Route Example
 
 ```mermaid
 flowchart TD
@@ -85,3 +85,20 @@ PQ --> |Yes| C1
 PQ --> |No| B1
 E --> E1
 ```
+
+# PrivateRouteHandler
+
+### Private Route Example
+
+```mermaid
+flowchart TD
+
+
+
+```
+
+.
+
+.
+
+.

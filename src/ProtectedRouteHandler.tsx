@@ -1,28 +1,33 @@
-import { useState, useEffect } from "react";
-import { useNavigate, Navigate } from "react-router-dom";
-import { usePermify } from "@permify/react-role";
-import { Role } from "./constants";
+import { useState, useEffect } from "react"
+import { useNavigate, Navigate } from "react-router-dom"
+import { usePermify } from "@permify/react-role"
+import { Role } from "./constants"
 import { Loader } from "./Loader"
-import { pipe, flow } from "fp-ts/lib/function";
-import {
-  head,
-  map as arrMap,
-  filter as arrFilter,
-  sequence,
-} from "fp-ts/Array";
-import { getOrElse, ApplicativePar } from "fp-ts/TaskEither";
-import { of as Tof, map as Tmap } from "fp-ts/Task";
-import { getOrElse as OgetOrElse } from "fp-ts/Option";
-import { orderRoles, asyncAuthorizationFunction } from "./utils";
-import { RoleNames } from "./constants";
+import { pipe, flow } from "fp-ts/lib/function"
+import { head, map as arrMap, filter as arrFilter, sequence } from "fp-ts/Array"
+import { getOrElse, ApplicativePar } from "fp-ts/TaskEither"
+import { of as Tof, map as Tmap } from "fp-ts/Task"
+import { getOrElse as OgetOrElse } from "fp-ts/Option"
+import { orderRoles, asyncAuthorizationFunction } from "./utils"
+import { RoleNames, RoleAuthorization } from "./constants"
 
 type ProtectedRouteHandlerProperties = {
-  roles: Array<Role>;
-};
+  roles: Array<Role>
+}
+
+const TresolveRolePath = Tmap(
+  flow(
+    arrFilter(({ authorization }: RoleAuthorization) => authorization),
+    arrMap(({ role }) => role),
+    orderRoles,
+    head,
+    OgetOrElse(() => RoleNames.BASIC),
+  ),
+)
 
 const ProtectedRouteHandler = ({ roles }: ProtectedRouteHandlerProperties) => {
-  const navigate = useNavigate();
-  const { isAuthorized, isLoading } = usePermify();
+  const navigate = useNavigate()
+  const { isAuthorized, isLoading } = usePermify()
   const [resolvedPath, setResolvedPath] = useState("")
   useEffect(() => {
     const authNavigation = async () => {
@@ -37,24 +42,16 @@ const ProtectedRouteHandler = ({ roles }: ProtectedRouteHandlerProperties) => {
             Tof,
           ),
         ),
-        Tmap(
-          flow(
-            arrFilter(({ authorization }) => authorization),
-            arrMap(({ role }) => role),
-            orderRoles,
-            head,
-            OgetOrElse(() => RoleNames.BASIC),
-          ),
-        ),
-      );
+        TresolveRolePath,
+      )
       setResolvedPath(await getAuthorizedRole())
-    };
+    }
 
-    authNavigation();
-  }, [isAuthorized, navigate, roles]);
+    authNavigation()
+  }, [isAuthorized, navigate, roles])
 
-  if (isLoading) return <Loader />  
-  return <Navigate to={resolvedPath} replace />;
-};
+  if (isLoading) return <Loader />
+  return <Navigate to={resolvedPath} replace />
+}
 
-export { ProtectedRouteHandler };
+export { ProtectedRouteHandler }

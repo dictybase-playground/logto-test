@@ -1,4 +1,4 @@
-import { type ReactNode } from "react";
+import { type ReactNode } from "react"
 
 enum RoleNames {
   ADMINISTRATOR = "administrator",
@@ -13,12 +13,21 @@ enum ACCESS {
   private,
 }
 
+type RouteMap = Array<[RoleNames, ReactNode]>
+
+type RoleAuthorization = Readonly<{ role: Role; authorization: boolean }>
+
 const rolePriority = {
   [RoleNames.ADMINISTRATOR]: 0,
   [RoleNames.CURATOR]: 1,
   [RoleNames.BASIC]: 2,
-};
+}
 
-type RouteMap = Array<[RoleNames, ReactNode]>;
-
-export { RoleNames, ACCESS, rolePriority, type RouteMap, type Role };
+export {
+  RoleNames,
+  ACCESS,
+  rolePriority,
+  type RouteMap,
+  type Role,
+  type RoleAuthorization,
+}
