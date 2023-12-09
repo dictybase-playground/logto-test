@@ -21,7 +21,7 @@ const TresolveRolePath = Tmap(
     arrMap(({ role }) => role),
     orderRoles,
     head,
-    OgetOrElse(() => RoleNames.BASIC),
+    OgetOrElse(() => "/forbidden" as Role),
   ),
 )
 
@@ -51,7 +51,7 @@ const ProtectedRouteHandler = ({ roles }: ProtectedRouteHandlerProperties) => {
   }, [isAuthorized, navigate, roles])
 
   if (isLoading) return <Loader />
-  return <Navigate to={resolvedPath} replace state={{ user: }} />
+  return <Navigate to={resolvedPath} replace />
 }
 
 export { ProtectedRouteHandler }

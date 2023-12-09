@@ -93,7 +93,8 @@ E --> E1
 ```mermaid
 flowchart TD
 
-
+A[`/`]
+B[`/protected`]
 
 ```
 

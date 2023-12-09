@@ -1,13 +1,6 @@
-import { useNavigate } from "react-router-dom";
+import { ACCESS } from "../constants"
+import { Forbidden } from "../Forbidden"
 
-const Forbidden = () => {
-  const navigate = useNavigate();
-  return (
-    <div>
-      <p>User is unauthorized.</p>
-      <button onClick={() => navigate("/")}> Return to home </button>
-    </div>
-  );
-};
-
-export { Forbidden };
+const access = ACCESS.public
+export { access }
+export default Forbidden
