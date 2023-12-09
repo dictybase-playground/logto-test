@@ -17,6 +17,7 @@
     "@mui/icons-material": "^5.14.19",
     "@mui/material": "^5.14.11",
     "@permify/react-role": "^0.5.3",
+    "dicty-graphql-schema": "dictybase/dicty-graphql-schema",
     "fp-ts": "2.x",
     "graphql": "^16.8.1",
     "react": "^18.0.0",
